@@ -67,8 +67,23 @@ BVHNode *BVHAccel::construct_bvh(std::vector<Primitive *>::iterator start,
   }
 
   BVHNode *node = new BVHNode(bbox);
-  node->start = start;
-  node->end = end;
+
+  int num_primitives = end - start;
+  if (num_primitives <= max_leaf_size) {
+    node->start = start;
+    node->end = end;
+    node->l = NULL;
+    node->r = NULL;
+  }
+  else {
+    Vector3D centroid(0.0);
+    for (auto p = start; p != end; p++) {
+      centroid += (*p) -> get_bbox().centroid();
+    }
+    centroid /= (float)num_primitives;
+
+  }
+  
 
   return node;
 

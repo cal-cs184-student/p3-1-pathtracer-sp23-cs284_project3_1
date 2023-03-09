@@ -28,8 +28,24 @@ bool Triangle::has_intersection(const Ray &r) const {
   // function records the "intersection" while this function only tests whether
   // there is a intersection.
 
+  // Great explanation of Moller-Trumbore Algorithm
+  // https://stackoverflow.com/questions/42740765/intersection-between-line-and-triangle-in-3d
 
-  return true;
+  Vector3D vector_1_2 = p2 - p1;
+  Vector3D vector_1_3 = p3 - p1;
+  Vector3D vector_1_o = r.o - p1;
+  Vector3D cross_d_1_o = cross(r.d, vector_1_3);
+  Vector3D n = cross(vector_1_o, vector_1_2);
+
+  double det = dot(cross_d_1_o, vector_1_2);
+  double inverse_det = 1.0/det;
+
+  double t = dot(vector_1_3, n) * inverse_det;
+  double beta = dot(vector_1_o, cross_d_1_o) * inverse_det;
+  double gamma = dot(r.d, n) * inverse_det;
+  double alpha = 1 - beta - gamma;
+
+  return t >= r.min_t && t <= r.max_t && alpha >= 0.0 && alpha <= 1.0 && beta >= 0.0 && beta <= 1.0 && gamma >= 0.0 && gamma <= 1.0;
 
 }
 
@@ -38,9 +54,36 @@ bool Triangle::intersect(const Ray &r, Intersection *isect) const {
   // implement ray-triangle intersection. When an intersection takes
   // place, the Intersection data should be updated accordingly
 
+  //Moller-Trumbore Algorithm
+  Vector3D vector_1_2 = p2 - p1;
+  Vector3D vector_1_3 = p3 - p1;
+  Vector3D vector_1_o = r.o - p1;
+  Vector3D cross_d_1_o = cross(r.d, vector_1_3);
+  Vector3D n = cross(vector_1_o, vector_1_2);
 
-  return true;
+  double det = dot(cross_d_1_o, vector_1_2);
+  double inverse_det = 1.0/det;
 
+  double t = dot(vector_1_3, n) * inverse_det;
+  double beta = dot(vector_1_o, cross_d_1_o) * inverse_det;
+  double gamma = dot(r.d, n) * inverse_det;
+  double alpha = 1 - beta - gamma;
+
+  bool intersect = t >= r.min_t && t <= r.max_t && alpha >= 0.0 && alpha <= 1.0 && beta >= 0.0 && beta <= 1.0 && gamma >= 0.0 && gamma <= 1.0;
+  if (intersect) {
+
+    // When there is a valid intersection, populate Intersection with 
+    isect->t = t;   // t-value of the input ray where the intersection occurs
+    isect->n = alpha * n1 + beta * n2 + gamma * n3;   // surface normal at the intersection
+    isect->primitive = this;   // primitive that was intersected 
+    isect->bsdf = get_bsdf(); // surface material (BSDF) at the hit point
+
+    // Update max_t to be the nearest intersection
+    // Ignore all future intersections that are farther away than current intersection
+    r.max_t = t; 
+    
+  }
+  return intersect;
 
 }
 
