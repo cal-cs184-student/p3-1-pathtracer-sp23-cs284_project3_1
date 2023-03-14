@@ -185,12 +185,27 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
   int num_samples = ns_aa;          // total samples to evaluate
   Vector2D origin = Vector2D(x, y); // bottom left corner of the pixel
   Vector3D radiance(0.);
+  float s1, s2 = 0.0;
+  int sample_no = 0;
+
 
   // Generate rays that pass through random samples around (x, y) to estimate radiance
-  for (int i = 0; i < num_samples; i++) {
+  for (int i = 0; i < num_samples; i++, sample_no++) {
+    // Adaptive sampling
+    if (sample_no % samplesPerBatch == 0) {
+      float mean = s1 / sample_no;
+      float variance = (1.0 / (sample_no - 1)) * (s2 - (s1 * s1) / sample_no);
+      float I = 1.96 * sqrt(variance / sample_no);
+
+      if (I < maxTolerance * mean) break;
+    }
     Vector2D random_sample = origin + gridSampler -> get_sample();
     Ray ray = camera -> generate_ray(random_sample.x / sampleBuffer.w, random_sample.y / sampleBuffer.h);
-    radiance += est_radiance_global_illumination(ray);
+    Vector3D sample_radiance = est_radiance_global_illumination(ray);
+    float sample_illuminance = sample_radiance.illum();
+    radiance += sample_radiance;
+    s1 += sample_illuminance;
+    s2 += sample_illuminance * sample_illuminance;
   }
 
   // Average radiance to obtain Monte Carlo Estimate
