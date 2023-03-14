@@ -41,15 +41,15 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
 <h1 align="middle">Project 3-1: Path Tracer</h1>
-<h2 align="middle">YOUR NAME(S)</h2>
+<h2 align="middle">I-Lun Tsai, Hsuan-Hao Wang</h2>
 
 <!-- Add Website URL -->
-<h2 align="middle">Website URL: <a href="TODO">TODO</a></h2>
+<h2 align="middle"><a href="https://cal-cs184-student.github.io/p3-1-pathtracer-sp23-cs284_project3_1/">Website URL</a></h2>
 
 <br><br>
 
 
-<div align="center">
+<!-- <div align="center">
   <table style="width=100%">
       <tr>
           <td align="middle">
@@ -80,11 +80,17 @@ Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.j
 <p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
 <p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
 
-<div>
+<div> -->
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+  Path tracing is a method that simulates the behavior of light rays. In this project, we implemented a renderer that uses a path tracing algorithm to render scenes with physical lighting. Specifically, I generated random rays from every pixel of the camera, determined the nearest intersection point for the ray with a primitive in the scene. 
+</p>
+<p>
+  After determining the intersection points, we rendered lighting calculating the amount of light that reached each pixel of the camera which included direct lighting and global illumination. This step was crucial in creating a more realistic illumination in 3D scenes.
+</p>
+<p> 
+  In summary, we were able to simulate the behavior of light rays in a scene, generate realistic illumination in 3D scenes, and speed up the rendering process using optimization techniques such as bounding volume hierarchy.
 </p>
 <br>
 
@@ -93,46 +99,63 @@ Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.j
 Explain the triangle intersection algorithm you implemented in your own words.
 Show images with normal shading for a few small .dae files. -->
 
-<h3>
+<!-- <h3>
   Walk through the ray generation and primitive intersection parts of the rendering pipeline.
+</h3> -->
+<h3>
+  Ray Generation
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  Simulating light involves casting a ray from its origin coordinate, which is the camera's position in the world, toward its direction vector. The process of casting a ray from a pixel contains three coordinate transformations to determine the appropriate ray direction.
+</p>
+<ol>
+  <li>Pixel coordinates frame \(\rightarrow\) normalized coordinate frame (scaling axes)</li>
+  <li>Normalized coordinate frame \(\rightarrow\) image frame (translation and scaling)</li>
+  <li>Image frame \(\rightarrow\) world frame (camera-to-world transform matrix)</li>
+</ol>
+<p>
+  We can sample a single pixel multiple times by altering the ray direction. After determining the ray direction for the pixel, the direction vector undergoes a camera-to-world transformation, ensuring that the ray propagates correctly in the scene.
 </p>
 <br>
 
-<h3>
+<!-- <h3>
   Explain the triangle intersection algorithm you implemented in your own words.
+</h3> -->
+<h3>
+  Primitive Intersection
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  We used the Moller-Trumbore Algorithm to detect ray intersections with a triangle primitive without the plane equation on which the triangle is laying. This algorithm utilizes the three vertices of the triangle to find a vector normal to the plane which is further used to calculate the  ray-plane intersection by solving linear equations. Barycentric coordinates are then used to determine whether the intersection point resides inside a triangle primitive. We had to check whether the t-value of the intersection was within the maximum and minimum bounds of the scene. 
+</p>
+<p>
+  For ray-sphere intersections, the intersection t-values were computed by solving a quadratic equation using the quadratic root formula. We checked if either of the roots of the quadratic fell within the maximum and minimum bounds and selected the minimum one.
 </p>
 <br>
 
-<h3>
+<!-- <h3>
   Show images with normal shading for a few small .dae files.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F584fab66-4f56-4769-9930-17170a87ba67%2Ftask1_4.png?id=11b36000-cad5-49cc-992e-de7fcb0685ca&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=1600&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1ba56817-2845-4614-b1b7-02aeee665d6d%2Ftask1_bunny.png?id=a0201efe-1bbd-4d70-8873-34d163144510&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=1600&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1c52cf7c-b8dd-4a48-890c-45d092d30787%2Ftask1_coil.png?id=2c0ca2a6-de1b-431e-8a1a-d8b99d1e5488&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=1600&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F0739cc9a-4cc1-4e7c-bcb7-f97edcadf477%2Ftask1_gems.png?id=f5ffde6d-6bce-4037-98fd-1a108fa9739a&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=1600&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
     </tr>
   </table>
@@ -145,50 +168,64 @@ Show images with normal shading for a few small .dae files. -->
 Show images with normal shading for a few large .dae files that you can only render with BVH acceleration.
 Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis. -->
 
-<h3>
+<!-- <h3>
   Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
 </h3>
 <p>
     YOUR RESPONSE GOES HERE
+</p> -->
+<p>
+  Our algorithm in constructing a Bounding Volume Hierarchy (BVH) is as follows:
+</p>
+<ol>
+  <li>Computed the mean 3D position of the centroids of each primitive within the node’s bounding box. The \((x, y, z)\) coordinates are the 3 candidate planes along which to split.</li>
+  <li>Find which split would result in the minimum (surface area for node’s bounding box \(\times\) number of primitives) for both left and right child nodes.</li>
+  <li>Recursively construct the BVH for the left and right nodes until leaf node contains at most max_leaf_size primitives.</li>
+</ol>
+<p>
+  We reason that selecting the minimum surface area from the 3 axes rather than a random axis along which to split would result in bounding box filled densely with primitives. Therefore, the probability that a ray would hit the bounding box of a BVH and also hit a primitive was largely increased.
+</p>
+<p>
+  The computational efficiency is significantly increased by BVH. Theoretically, the average number of intersection tests per ray is O(n) without BVH and O(logn) with a BVH, where n is the number of primitives in the scene. In order to render the image of a cow below, approximately 872 ray intersection tests were performed without the BVH compared to only 4 intersection tests with the BVH. In terms of rendering time, the process took 41.9231 seconds to complete without the BVH compared to 0.0362 seconds with the BVH.  
 </p>
 
-<h3>
+<!-- <h3>
   Show images with normal shading for a few large .dae files that you can only render with BVH acceleration.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F097e1b4b-cb3b-4a0d-98d5-1f85acb8772b%2FUntitled.png?id=aeb7b92c-3f89-4734-8005-5949aced067a&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=2000&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fcb3923e6-c0f2-41cb-a3ca-fd86720afd22%2Fmaxplanck_screenshot_3-13_21-8-43.png?id=035c8ee9-1c10-4f81-9d60-cab8c099c9c6&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=2000&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F67e1c5e6-3a5a-4f05-ad8c-90bb6a6e6417%2Fcow_screenshot_3-13_21-7-25.png?id=b9e8bcb9-e072-40b7-a4d5-a0f45b0b5d96&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=2000&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="https://foil-valley-a41.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F19da071b-ab94-4dc6-8ecc-62ac59d0f103%2FCBlucy_screenshot_3-13_21-9-51.png?id=92404fc8-bda2-4b44-975d-2bfe33b429d6&table=block&spaceId=ff67df48-404c-4889-a983-fd4c22d51181&width=2000&userId=&cache=v2" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 
-<h3>
+<!-- <h3>
   Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis.
 </h3>
 <p>
     YOUR RESPONSE GOES HERE
 </p>
-<br>
+<br> -->
 
 <h2 align="middle">Part 3: Direct Illumination (20 Points)</h2>
 <!-- Walk through both implementations of the direct lighting function.
@@ -442,11 +479,14 @@ You will probably want to use the instructional machines for the above renders i
 <!-- Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
 Pick one scene and render it with at least 2048 samples per pixel. Show a good sampling rate image with clearly visible differences in sampling rate over various regions and pixels. Include both your sample rate image, which shows your how your adaptive sampling changes depending on which part of the image you are rendering, and your noise-free rendered result. Use 1 sample per light and at least 5 for max ray depth. -->
 
-<h3>
+<!-- <h3>
   Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
-</h3>
+</h3> -->
 <p>
-    YOUR RESPONSE GOES HERE
+  Adaptive sampling is a method that intelligently stops processing rays per pixel by analyzing the convergence behavior of the pixel's illuminance. If a pixel appears to have converged to a stable value, then no additional sampling is necessary to render the scene accurately. The implementation of this technique involves adjusting the raytrace_pixel() function so that it ends its sample-averaging loop before reaching the maximum number of samples, provided that the conditions for illuminance convergence have been met. These conditions are based on the average illuminance, the variance in the samples, and z-scores, assuming that the probability distribution of illuminance in the pixel's footprint is Gaussian. This technique improves computational efficiency by optimizing the amount of pixel super-sampling, and it is similar to Mipmap architectures because it combines the information variation within a single pixel's scene footprint with the degree of super-sampling required for that pixel.
+</p>
+<p>
+  The image generated using adaptive sampling had a maximum of 2048 samples per pixel, a ray depth of 5 for global illumination, and a sampling batch size of 64 rays. Upon observing the sample rate map, it was noticed that regions in the scene with more complex surfaces and prominent contrast gradients required more samples per pixel. This is due to the higher variance of samples in these areas, resulting in a longer convergence time. The use of adaptive sampling significantly reduced the render time to 296.2882 seconds, processing 370,872,646 rays, as compared to the non-adaptive approach which took 937.0081 seconds and processed 1,238,167,052 rays. These results clearly demonstrate the computational advantages of adaptive sampling, which reduces the number of processed rays by almost an order of magnitude without compromising the quality of the rendered image. Comparing the final images rendered with and without adaptive sampling, both methods produce almost identical outputs.
 </p>
 <br>
 
