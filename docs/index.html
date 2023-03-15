@@ -332,87 +332,99 @@ For CBbunny.dae, compare rendered views with max_ray_depth set to 0, 1, 2, 3, an
 Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.
 You will probably want to use the instructional machines for the above renders in order to not burn up your own computer for hours. -->
 
-<h3>
+<!-- <h3>
   Walk through your implementation of the indirect lighting function.
-</h3>
+</h3> -->
 <p>
-    YOUR RESPONSE GOES HERE
+  Although direct lighting produces decent images, it is unrealistic because it only considers one light bounce. In real life, light bounces multiple times off surfaces, so areas not directly hit by light can still be illuminated. Therefore, global illumination is needed to account for this.
 </p>
 <br>
 
-<h3>
+<!-- <h3>
   Show some images rendered with global (direct and indirect) illumination. Use 1024 samples per pixel.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="./images/p4/global_1.png" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
-      </td>
-    </tr>
-  </table>
-</div>
-<br>
-
-<h3>
-  Pick one scene and compare rendered views first with only direct illumination, then only indirect illumination. Use 1024 samples per pixel. (You will have to edit PathTracer::at_least_one_bounce_radiance(...) in your code to generate these views.)
-</h3>
-<!-- Example of including multiple figures -->
-<div align="middle">
-  <table style="width:100%">
-    <tr align="center">
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only direct illumination (example1.dae)</figcaption>
-      </td>
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only indirect illumination (example1.dae)</figcaption>
+        <img src="./images/p4/global_2.png" align="middle" width="400px"/>
+        <figcaption></figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+  In this section, the first step in implementing global illumination was to create a method that returns the radiance at zero light bounces. This method determines the light emitted from a light source that travels directly toward the camera. This method uses direct lighting methods created in Part 3, with hemisphere sampling or importance sampling.
+</p>
+<br>
+<p>
+  The recursive method for at least one light bounce was then implemented. This method uses Russian Roulette to terminate sampling randomly to decrease the rendering computations required for the scene. The method starts by setting a vector L_out, which is used to accumulate radiances. The maximum ray depth is then checked to ensure it is greater than one. If the pdf is zero, dividing by it can lead to Unsavory White Specks. Also, if the new ray shot from the current point does not intersect with the BVH, continuing is useless. If these conditions are met, the method checks if the current ray depth is the same as the maximum. If it is, another bounce must be guaranteed, so the method accumulates L_out with a recursive call to itself. The resulting radiance is scaled by the BSDF and a cosine factor, then divided by the pdf. In this recursive call, the new ray created earlier is used, with a depth value decremented from the current ray's value. This approach eventually terminates the recursion without Russian Roulette because the ray depth will no longer exceed one.
+</p>
+<br>
+<p>
+  If the current ray is less than the maximum ray depth, Russian Roulette can be used to terminate the ray randomly. A coin_flip method is called with a termination probability of 0.3 (the same as the continuation probability of 0.7). If Russian Roulette dictates that sampling should continue, the method checks if the current ray's depth is greater than one. If it is, L_out is accumulated with a recursive call to itself, using the new ray created earlier. As before, the resulting radiance is scaled by the BSDF and a cosine factor, then divided by the pdf. However, it is also divided by (1 - termination probability) because of the use of Russian Roulette.
 </p>
 <br>
 
-<h3>
-  For CBbunny.dae, compare rendered views with max_ray_depth set to 0, 1, 2, 3, and 100 (the -m flag). Use 1024 samples per pixel.
-</h3>
+<!-- <h3>
+  Pick one scene and compare rendered views first with only direct illumination, then only indirect illumination. Use 1024 samples per pixel. (You will have to edit PathTracer::at_least_one_bounce_radiance(...) in your code to generate these views.)
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="./images/p4/direct.png" align="middle" width="400px"/>
+        <figcaption>Only direct illumination</figcaption>
+      </td>
+      <td>
+        <img src="./images/p4/indirect.png" align="middle" width="400px"/>
+        <figcaption>Only indirect illumination</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+<p>
+  The images of CBbunny.dae displayed below reveals that increasing the maximum ray depth leads to an increase in the scene's light. Initially, with zero bounces, the only visible light is emitted from the light source. After one bounce, the resulting image is almost identical to that obtained in Part 3, where direct lighting and importance sampling was used, except for the visible emitted light at the top. As the maximum ray depth is increased, the resulting image becomes progressively brighter, and more colored light is seen on uncolored surfaces. It is important to note that, despite the probabilistic random termination used in our implementation, the render time for images at higher maximum ray depths did not increase significantly compared to images at lower maximum ray depths. Even with a maximum ray depth of 100, the likelihood of the at_least_one_bounce method being recursed 99 times is extremely low (in our implementation, the probability of this happening is (0.7)99, which is a very small number).
+</p>
+<br>
+
+<!-- <h3>
+  For CBbunny.dae, compare rendered views with max_ray_depth set to 0, 1, 2, 3, and 100 (the -m flag). Use 1024 samples per pixel.
+</h3> -->
+<!-- Example of including multiple figures -->
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="./images/p4/depth0.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 0 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="./images/p4/depth1.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 1 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="./images/p4/depth2.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 2 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="./images/p4/depth3.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 3 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="./images/p4/depth4.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 100 (CBbunny.dae)</figcaption>
       </td>
     </tr>
@@ -420,58 +432,58 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+  We can see that increasing sample size decreases the noise of the render from the below comparisons.
 </p>
 <br>
 
-<h3>
+<!-- <h3>
   Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1 sample per pixel (example1.dae)</figcaption>
+        <img src="./images/p4/sample1.png" align="middle" width="400px"/>
+        <figcaption>1 sample per pixel (sphere.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>2 samples per pixel (example1.dae)</figcaption>
-      </td>
-    </tr>
-    <tr align="center">
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>4 samples per pixel (example1.dae)</figcaption>
-      </td>
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>8 samples per pixel (example1.dae)</figcaption>
+        <img src="./images/p4/sample2.png" align="middle" width="400px"/>
+        <figcaption>2 samples per pixel (sphere.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>16 samples per pixel (example1.dae)</figcaption>
+        <img src="./images/p4/sample4.png" align="middle" width="400px"/>
+        <figcaption>4 samples per pixel (sphere.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>64 samples per pixel (example1.dae)</figcaption>
+        <img src="./images/p4/sample8.png" align="middle" width="400px"/>
+        <figcaption>8 samples per pixel (sphere.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1024 samples per pixel (example1.dae)</figcaption>
+        <img src="./images/p4/sample16.png" align="middle" width="400px"/>
+        <figcaption>16 samples per pixel (sphere.dae)</figcaption>
+      </td>
+      <td>
+        <img src="./images/p4/sample64.png" align="middle" width="400px"/>
+        <figcaption>64 samples per pixel (sphere.dae)</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="./images/p4/sample1024.png" align="middle" width="400px"/>
+        <figcaption>1024 samples per pixel (sphere.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
-<br>
+<!-- <br>
 <p>
     YOUR EXPLANATION GOES HERE
-</p>
+</p> -->
 <br>
 
 
