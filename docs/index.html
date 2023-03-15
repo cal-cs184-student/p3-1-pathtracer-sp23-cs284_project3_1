@@ -233,16 +233,16 @@ Show some images rendered with both implementations of the direct lighting funct
 Focus on one particular scene with at least one area light and compare the noise levels in soft shadows when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) using light sampling, not uniform hemisphere sampling.
 Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis. -->
 
-<h3>
+<!-- <h3>
   Walk through both implementations of the direct lighting function.
-</h3>
+</h3> -->
 <p>
-    YOUR RESPONSE GOES HERE
+  Two ways to achieve direct lighting are uniform hemisphere sampling and light importance sampling. Uniform hemisphere sampling utilizes a probability distribution function (pdf) that evenly distributes the probability among all points in the hemisphere. To simulate a bounce from a light source to a surface and back to the camera, we randomly generate a vector from this hemisphere and then check if the resulting ray intersects any light sources. On the other hand, light importance sampling involves sampling over the light sources and checking if there is an unobstructed path for a ray to travel between the light and the surface. By utilizing the rays and light values, we can calculate the radiance produced on the surface by each light source and then average over all the light sources.
 </p>
 
-<h3>
+<!-- <h3>
   Show some images rendered with both implementations of the direct lighting function.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
@@ -258,23 +258,23 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="./images/p3/CBbunny_H_64_32.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="./images/p3/CBbunny_64_32.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="./images/p3/CBdragon_H_64_32.png" align="middle" width="400px"/>
+        <figcaption>CBdragon.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="./images/p3/CBdragon_64_32.png" align="middle" width="400px"/>
+        <figcaption>CBdragon.dae</figcaption>
       </td>
     </tr>
     <br>
@@ -282,44 +282,44 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
 </div>
 <br>
 
-<h3>
+<!-- <h3>
   Focus on one particular scene with at least one area light and compare the noise levels in <b>soft shadows</b> when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) using light sampling, <b>not</b> uniform hemisphere sampling.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>1 Light Ray (example1.dae)</figcaption>
+        <img src="./images/p3/dragon_1_1.png" align="middle" width="200px"/>
+        <figcaption>1 Light Ray</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>4 Light Rays (example1.dae)</figcaption>
+        <img src="./images/p3/dragon_1_4.png" align="middle" width="200px"/>
+        <figcaption>4 Light Rays</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>16 Light Rays (example1.dae)</figcaption>
+        <img src="./images/p3/dragon_1_16.png" align="middle" width="200px"/>
+        <figcaption>16 Light Rays</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>64 Light Rays (example1.dae)</figcaption>
+        <img src="./images/p3/dragon_1_64.png" align="middle" width="200px"/>
+        <figcaption>64 Light Rays</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <p>
-    YOUR EXPLANATION GOES HERE
+  Since we take multiple samples for non-point light sources, the randomness arises from the location differences along the light source. As the number of samples increases, the sensitivity of the surface reflectance to the variance in the distance from the sampled light source decreases. With lower sampling rates, the chances of accidentally sampling vectors that are not representative of the lighting of the point increase. For example, we might end up sampling a shaded point when most of the light reaches the point. However, as we increase the number of samples, we account for all of these vectors more effectively, which results in a more noticeable shade gradient.
 </p>
 <br>
 
-<h3>
+<!-- <h3>
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
-</h3>
+</h3> -->
 <p>
-    YOUR RESPONSE GOES HERE
+  Uniform hemisphere sampling yields a higher noise level, giving equal weight to samples from all locations across the hemisphere. Uniform hemisphere sampling is impractical for environments with point lights because the sampled rays will not point directly to the light. Compared to light importance sampling, the environment tends to have more noisy light points. Light importance sampling produces a more consistent image with an observable level of consistency. For example, in a single-bounce light-sampled image, the ceiling is always completely dark, as the rays between the surface and the light are always regarded as being shadowed. In general, light importance sampling results in a smoother and more consistent image with the geometries, but it has a somewhat artificial look that can be overproduced.
 </p>
 <br>
 
