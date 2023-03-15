@@ -392,7 +392,7 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-  The images of CBbunny.dae displayed below reveals that increasing the maximum ray depth leads to an increase in the scene's light. Initially, with zero bounces, the only visible light is emitted from the light source. After one bounce, the resulting image is almost identical to that obtained in Part 3, where direct lighting and importance sampling was used, except for the visible emitted light at the top. As the maximum ray depth is increased, the resulting image becomes progressively brighter, and more colored light is seen on uncolored surfaces. It is important to note that, despite the probabilistic random termination used in our implementation, the render time for images at higher maximum ray depths did not increase significantly compared to images at lower maximum ray depths. Even with a maximum ray depth of 100, the likelihood of the at_least_one_bounce method being recursed 99 times is extremely low (in our implementation, the probability of this happening is (0.7)99, which is a very small number).
+  The images of CBbunny.dae displayed below reveals that increasing the maximum ray depth leads to an increase in the scene's light. Initially, with zero bounces, the only visible light is emitted from the light source. After one bounce, the resulting image is almost identical to that obtained in Part 3, where direct lighting and importance sampling was used, except for the visible emitted light at the top. As the maximum ray depth is increased, the resulting image becomes progressively brighter, and more colored light is seen on uncolored surfaces. It is important to note that, despite the probabilistic random termination used in our implementation, the render time for images at higher maximum ray depths did not increase significantly compared to images at lower maximum ray depths. Even with a maximum ray depth of 100, the likelihood of the at_least_one_bounce method being recursed 99 times is extremely low (in our implementation, the probability of this happening is \(0.7^{99}\), which is a very small number).
 </p>
 <br>
 
@@ -464,7 +464,7 @@ You will probably want to use the instructional machines for the above renders i
     </tr>
     <tr align="center">
       <td>
-        <img src="./images/p4/sample16.png" align="middle" width="400px"/>
+        <img src="./images/p4/sampl16.png" align="middle" width="400px"/>
         <figcaption>16 samples per pixel (sphere.dae)</figcaption>
       </td>
       <td>
@@ -497,35 +497,40 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
 <p>
   Adaptive sampling is a method that intelligently stops processing rays per pixel by analyzing the convergence behavior of the pixel's illuminance. If a pixel appears to have converged to a stable value, then no additional sampling is necessary to render the scene accurately. The implementation of this technique involves adjusting the raytrace_pixel() function so that it ends its sample-averaging loop before reaching the maximum number of samples, provided that the conditions for illuminance convergence have been met. These conditions are based on the average illuminance, the variance in the samples, and z-scores, assuming that the probability distribution of illuminance in the pixel's footprint is Gaussian. This technique improves computational efficiency by optimizing the amount of pixel super-sampling, and it is similar to Mipmap architectures because it combines the information variation within a single pixel's scene footprint with the degree of super-sampling required for that pixel.
 </p>
-<p>
-  The image generated using adaptive sampling had a maximum of 2048 samples per pixel, a ray depth of 5 for global illumination, and a sampling batch size of 64 rays. Upon observing the sample rate map, it was noticed that regions in the scene with more complex surfaces and prominent contrast gradients required more samples per pixel. This is due to the higher variance of samples in these areas, resulting in a longer convergence time. The use of adaptive sampling significantly reduced the render time to 296.2882 seconds, processing 370,872,646 rays, as compared to the non-adaptive approach which took 937.0081 seconds and processed 1,238,167,052 rays. These results clearly demonstrate the computational advantages of adaptive sampling, which reduces the number of processed rays by almost an order of magnitude without compromising the quality of the rendered image. Comparing the final images rendered with and without adaptive sampling, both methods produce almost identical outputs.
-</p>
 <br>
 
-<h3>
+<!-- <h3>
   Pick two scenes and render them with at least 2048 samples per pixel. Show a good sampling rate image with clearly visible differences in sampling rate over various regions and pixels. Include both your sample rate image, which shows your how your adaptive sampling changes depending on which part of the image you are rendering, and your noise-free rendered result. Use 1 sample per light and at least 5 for max ray depth.
-</h3>
+</h3> -->
 <!-- Example of including multiple figures -->
 <div align="middle">
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example1.dae)</figcaption>
+        <img src="./images/p5/bunny_n.png" align="middle" width="400px"/>
+        <figcaption>Without adaptive sampling (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example1.dae)</figcaption>
+        <img src="./images/p5/bunny_a.png" align="middle" width="400px"/>
+        <figcaption>With adaptive sampling (CBbunny.dae)</figcaption>
+      </td>
+      <td>
+        <img src="./images/p5/bunny_a_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example2.dae)</figcaption>
+        <img src="./images/p5/spheres_n.png" align="middle" width="400px"/>
+        <figcaption>Without adaptive sampling (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example2.dae)</figcaption>
+        <img src="./images/p5/spheres_a.png" align="middle" width="400px"/>
+        <figcaption>With adaptive sampling (CBspheres_lambertian.dae)</figcaption>
+      </td>
+      <td>
+        <img src="./images/p5/spheres_a_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
