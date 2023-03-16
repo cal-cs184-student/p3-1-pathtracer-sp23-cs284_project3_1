@@ -198,54 +198,56 @@ bool BVHAccel::intersect(const Ray &ray, Intersection *i, BVHNode *node) const {
   //   hit = p->intersect(ray, i) || hit;
   // }
   // return hit;
-  // total_isects++; // number of interesection tests for the ray
-  // if (node->bb.intersect(ray, ray.min_t, ray.max_t)) {
+  total_isects++;
+  if (node->bb.intersect(ray, ray.min_t, ray.max_t)) {
       
-  //     // Node is a leaf
-  //     if (node->isLeaf()) {
+      if (!node->isLeaf()) {
+          bool hit_left = intersect(ray, i, node->l); 
+          bool hit_right = intersect(ray, i, node->r);
+          return hit_left || hit_right;
+      }
+
+      else {
           
-  //         bool hit = false;
-  //         for (auto p = node->start; p != node->end; p++) {
-  //             total_isects++;
-  //             bool p_hit = (*p)->intersect(ray, i);
-  //             hit = hit || p_hit; 
+          bool hit = false;
+          for (auto p = node->start; p != node->end; p++) {
+              total_isects++;
+              bool p_hit = (*p)->intersect(ray, i);
+              hit = hit || p_hit; 
                             
-  //         }
+          }
           
-  //         return hit;
-  //     }
-  //     else {
-  //         bool hit_left = intersect(ray, i, node->l); 
-  //         bool hit_right = intersect(ray, i, node->r);
-  //         return hit_left || hit_right;
-  //     }
+          return hit;
+      }
   
-  // } else {
-  //     return false;
+  } 
+  else {
+      return false;
+  }
+
+  // // // Ray misses node
+  // total_isects++;
+  // if (!node -> bb.intersect(ray, ray.min_t, ray.max_t)) return false;
+   
+  // // Ray hits internal node
+  // if (!node -> isLeaf()) {
+  //   bool hit_left = intersect(ray, i, node->l); 
+  //   bool hit_right = intersect(ray, i, node->r);
+  //   return hit_left || hit_right;
   // }
 
-  // Ray misses node
-  if (!node -> bb.intersect(ray, ray.min_t, ray.max_t)) return false;
-   
-  // Ray hits internal node
-  if (!node -> isLeaf()) {
-    bool hit_left = intersect(ray, i, node->l); 
-    bool hit_right = intersect(ray, i, node->r);
-    return hit_left || hit_right;
-  }
-
-  // Ray hits leaf node
-  else {
-    bool hit = false;
-    for (auto p = node->start; p != node->end; p++) {
-        total_isects++;
-        hit = hit || ((*p)->intersect(ray, i));           
-    }
-    return hit;
-  }
+  // // Ray hits leaf node
+  // else {
+  //   bool hit = false;
+  //   for (auto p = node->start; p != node->end; p++) {
+  //       total_isects++;
+  //       hit = hit || ((*p)->intersect(ray, i));           
+  //   }
+  //   return hit;
+  // }
 
   // Ray hits bounding box of leaf node but has no intersection with primitives
-  return false;
+  // return false;
 
 }
 
